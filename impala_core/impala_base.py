@@ -90,11 +90,14 @@ class Impala(Pyodbc):
     
     def disconnect(self):
         if self.connected == True:
-            print("Disconnected %s Session from %s" % (self.name_str.capitalize(), self.opts[self.name_str + '_base_url'][0]))
+            print("Disconnected %s Session from %s" % (self.name_str.capitalize(), self.opts[self.name_str + '_host'][0]))
         else:
             print("%s Not Currently Connected - Resetting All Variables" % self.name_str.capitalize())
         self.session = None
-        self.connection.close()
+        try:
+            self.connection.close()
+        except:
+            pass
         self.connection = None
         self.connect_pass = None
         self.connected = False
@@ -151,7 +154,7 @@ class Impala(Pyodbc):
 
             if result == 0:
                 self.connected = True
-                print("%s - %s Connected!" % (self.name_str.capitalize(), self.opts[self.name_str + '_base_url'][0]))
+                print("%s - %s Connected!" % (self.name_str.capitalize(), self.opts[self.name_str + '_host'][0]))
             else:
                 print("Connection Error - Perhaps Bad Usename/Password?")
 
@@ -165,15 +168,15 @@ class Impala(Pyodbc):
         self.session = None
         result = -1
         n = self.name_str
-        kar = [n + "_dsn", n + "_host", n + "_port", n + "_default_db", n + "_authmech", n + "_usesasl", n + "_user", n + "_usessl", n + "_allowselfsignedcerts"]
+        kar = [n + "_dsn", n + "_host", n + "_port", n + "_default_db", n + "_authmech", n + "_usesasl", n + "_user", n + "_usessl", n + "_allowselfsignedcert"]
         var = []
         for x in kar:
-            var.append(self.myopts[x])
+            var.append(self.myopts[x][0])
             if x == n + "_user":  # Sneak in the password
                 var.append(self.connect_pass)
         
         # Create a session variable if needed
-        conn_string = "DSN=%s; Host=%s, Port=%s, Database=%s; AuthMech=%s; UseSASL=%s; UID=%s; PWD=%s; SSL=%s; AllowSelfSignedServerCert=%s" % (var[0], var[1], var[2], var[3], var[4], var[5], var[6], var[7], var[8], var[9])
+        conn_string = "DSN=%s; Host=%s; Port=%s; Database=%s; AuthMech=%s; UseSASL=%s; UID=%s; PWD=%s; SSL=%s; AllowSelfSignedServerCert=%s" % (var[0], var[1], var[2], var[3], var[4], var[5], var[6], var[7], var[8], var[9])
 
         try:
             self.connection = po.connect(conn_string, autocommit=True)
@@ -224,12 +227,11 @@ class Impala(Pyodbc):
         mydf = None
         status = ""
         try:
-            self.cursor.execute(query)
-            if self.cursor.rowcount > 0:
-                mydf = self.as_pandas_DataFrame()
+            self.session.execute(query)
+            mydf = self.as_pandas_DataFrame()
+            if mydf is not None:
                 status = "Success"
             else:
-                mydf = None
                 status = "Success - No Results"
         except Exception as e:
             mydf = None
