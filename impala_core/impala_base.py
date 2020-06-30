@@ -65,7 +65,7 @@ class Impala(Pyodbc):
 
     # Class Init function - Obtain a reference to the get_ipython()
     def __init__(self, shell, pd_display_grid="html", authmech="3", usesasl="1", usessl="1", allowselfsignedcert="0", *args, **kwargs):
-        super(Impala, self).__init__(shell, pd_display_grid, authmech, usesasl, usessl, allowselfsignedcert) # Change the class name (Start) to match your actual class name
+        super(Impala, self).__init__(shell, pd_display_grid) # Change the class name (Start) to match your actual class name
 
     # No need to change this code
         self.load_env(self.custom_evars) 

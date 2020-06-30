@@ -22,7 +22,7 @@ version_ns = {}
 
 integration_str = "impala" # This could change to hive, drill, elastic etc.
 integration_base_ver_min = '0.0.7' # This is the min version of integration base that will work. 
-pyodbc_integration_base_ver_min = '0.0.7' # This is the min version of jupyter_pyodbc required. 
+pyodbc_integration_base_ver_min = '0.0.8' # This is the min version of jupyter_pyodbc required. 
 
 with open(pjoin(here, integration_str + '_core', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
