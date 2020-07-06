@@ -65,7 +65,7 @@ class Impala(Pyodbc):
 
     # Class Init function - Obtain a reference to the get_ipython()
     def __init__(self, shell, pd_display_grid="html", authmech="3", usesasl="1", usessl="1", allowselfsignedcert="0", debug=False, *args, **kwargs):
-        super(Impala, self).__init__(shell, debug, pd_display_grid) # Change the class name (Start) to match your actual class name
+        super(Impala, self).__init__(shell, debug=debug, pd_display_grid=pd_display_grid) # Change the class name (Start) to match your actual class name
         self.debug = debug
     # No need to change this code
         self.opts['pd_display_grid'][0] = pd_display_grid
