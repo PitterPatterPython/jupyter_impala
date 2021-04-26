@@ -17,7 +17,7 @@ from IPython.core.display import HTML
 #import IPython.display
 from IPython.display import display_html, display, Javascript, FileLink, FileLinks, Image
 import ipywidgets as widgets
-
+import jupyter_integrations_utility as jiu
 # Put any additional imports specific to your integration here: 
 import pyodbc as po
 
