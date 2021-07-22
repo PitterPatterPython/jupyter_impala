@@ -65,6 +65,47 @@ class Impala(Pyodbc):
         self.parse_instances()
 
 
+    # Overriding Custom Query to handle thrift errors and auto matic resubmit
+    def customQuery(self, query, instance):
+        mydf = None
+        status = ""
+        resubmit = False
+        try:
+            self.session.execute(query)
+            mydf = self.as_pandas_DataFrame()
+            if mydf is not None:
+                status = "Success"
+            else:
+                status = "Success - No Results"
+        except Exception as e:
+            mydf = None
+            str_err = str(e)
+            if self.debug:
+                print("Error: %s" % str_err)
+            if str_err.find("Impala Thrift API") >= 0 and str_err.find("SSL_write: bad write retry") >= 0:
+                if resubmit == False:
+                    # This is an old connection, let's just resubmit it (once)
+                    print("SSL_write Thrift error detected - Likely Stale Connection - Attempting 1 retry")
+                    try:
+                        resubmit = True # First we make sure we only resubmit once
+                        self.session.execute(query)
+                        mydf = self.as_pandas_DataFrame()
+                        if mydf is not None:
+                            status = "Success"
+                        else:
+                            status = "Success - No Results"
+                    except Exception as e1:
+                        mydf = None
+                        str_err1 = str(e1)
+                        final_err = "First Run: %s\nSecond Run: %s"  % (str_err, str_err1)
+                        if self.debug:
+                            print("Second Run Error: %s" % str_err1)
+                        status = "Failure - query_error: " % final_err
+            else:
+                status = "Failure - query_error: " + str_err
+        return mydf, status
+
+
 # def customDisconnect - In pyodbc
 # def customAuth - In pyodbc
 # def validateQuery - In pyodbc
