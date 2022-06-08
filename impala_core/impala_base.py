@@ -71,8 +71,8 @@ class Impala(Pyodbc):
         status = ""
         resubmit = False
         try:
-            self.session.execute(query)
-            mydf = self.as_pandas_DataFrame()
+            self.instances[instance]['sessions'].execute(query)
+            mydf = self.as_pandas_DataFrame(instance)
             if mydf is not None:
                 status = "Success"
             else:
@@ -88,8 +88,8 @@ class Impala(Pyodbc):
                     print("SSL_write Thrift error detected - Likely Stale Connection - Attempting 1 retry")
                     try:
                         resubmit = True # First we make sure we only resubmit once
-                        self.session.execute(query)
-                        mydf = self.as_pandas_DataFrame()
+                        self.instances[instance]['session'].execute(query)
+                        mydf = self.as_pandas_DataFrame(instance)
                         if mydf is not None:
                             status = "Success"
                         else:
