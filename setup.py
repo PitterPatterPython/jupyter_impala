@@ -20,33 +20,10 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Get the current package version.
 version_ns = {}
 
-integration_str = "impala" # This could change to hive, drill, elastic etc.
-integration_base_ver_min = '0.1.0' # This is the min version of integration base that will work. 
-pyodbc_integration_base_ver_min = '0.1.0' # This is the min version of jupyter_pyodbc required. 
+integration_str = "impala" # This could change to hive, drill, elastic etc. 
 
 with open(pjoin(here, integration_str + '_core', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
-
-
-try:
-    import integration_core
-except:
-    print("jupyter_%s requires jupyter integration_base (version %s required). No jupyter_integration_base found, please install from https://github.com/johnomernik/jupyter_integration_base" % (integration_str, integration_base_ver_min))
-    sys.exit(1)
-
-try:
-    import pyodbc_core
-except:
-    print("jupyter_%s requires jupyter_pyodbc (version %s required). No jupyter_pyodbc found, please install from https://github.com/johnomernik/jupyter_pyodbc" % (integration_str, pyodbc_integration_base_ver_min))
-    sys.exit(1)
-
-if integration_core.__version__ < integration_base_ver_min:
-    print("jupyter_%s requires jupyter_integration_base version %s or higher. You are on version %s. Please update" % (integration_str, integration_base_ver_min, integration_core.__version__))
-    sys.exit(1)
-
-if pyodbc_core.__version__ < pyodbc_integration_base_ver_min:
-    print("jupyter_%s requires jupyter_pyodbc version %s or higher. You are on version %s. Please update" % (integration_str, pyodbc_integration_base_ver_min, pyodbc_core.__version__))
-    sys.exit(1)
 
 setup_args = dict(
     name='jupyter_' + integration_str,
