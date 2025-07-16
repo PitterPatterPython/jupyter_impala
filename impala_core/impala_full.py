@@ -71,8 +71,9 @@ class Impala(Pyodbc):
         status = ""
         resubmit = False
         try:
-            self.instances[instance]['session'].execute(query)
-            mydf = self.as_pandas_DataFrame(instance)
+            cursor = self.instances[instance]['session'].cursor()
+            cursor.execute(query)
+            mydf = self.as_pandas_DataFrame(cursor)
             if mydf is not None:
                 status = "Success"
             else:
@@ -89,7 +90,7 @@ class Impala(Pyodbc):
                     try:
                         resubmit = True # First we make sure we only resubmit once
                         self.instances[instance]['session'].execute(query)
-                        mydf = self.as_pandas_DataFrame(instance)
+                        mydf = self.as_pandas_DataFrame(self.instances[instance]['session'])
                         if mydf is not None:
                             status = "Success"
                         else:
